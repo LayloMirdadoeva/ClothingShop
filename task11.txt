@@ -1,0 +1,56 @@
+<?php
+
+// Пример объекта
+class Item {
+    public $name;
+    public $price;
+    public $rating;
+
+    public function __construct($name, $price, $rating) {
+        $this->name = $name;
+        $this->price = $price;
+        $this->rating = $rating;
+    }
+}
+
+// Функция сортировки
+function sortAndDisplay(array $items, callable ...$criteria) {
+    // Сортировка с использованием функции uasort и критериев
+    usort($items, function($a, $b) use ($criteria) {
+        foreach ($criteria as $criterion) {
+            $result = $criterion($a, $b);
+            if ($result !== 0) {
+                return $result;
+            }
+        }
+        return 0; // Если все критерии равны, возвращаем 0
+    });
+
+    // Вывод таблицы
+    echo "<table border='1'>";
+    echo "<tr><th>Name</th><th>Price</th><th>Rating</th></tr>"; // Заголовки таблицы
+    foreach ($items as $item) {
+        echo "<tr><td>{$item->name}</td><td>{$item->price}</td><td>{$item->rating}</td></tr>";
+    }
+    echo "</table>";
+}
+
+// Пример массива объектов
+$items = [
+    new Item('Item 1', 200, 4.5),
+    new Item('Item 2', 100, 3.5),
+    new Item('Item 3', 300, 5.0),
+    new Item('Item 4', 150, 4.0),
+];
+
+// Сортируем по цене (возрастание), затем по рейтингу (убывание)
+sortAndDisplay($items, 
+    function($a, $b) {
+        return $a->price <=> $b->price; // Сортировка по цене
+    },
+    function($a, $b) {
+        return $b->rating <=> $a->rating; // Сортировка по рейтингу
+    }
+);
+
+?>
